@@ -15,7 +15,7 @@
  *
  * Redirection is done entirely from the test; no source file has a seam cut
  * into it for testability:
- *   - dns.lookup sends api.7cav.us to loopback.
+ *   - dns.lookup sends api.15thmeu.org to loopback.
  *   - tls.connect hands back a plain socket to a plain HTTP stub, faking the
  *     'secureConnect' the https Agent waits for. That keeps the real axios,
  *     axios-retry, ClientRequest and HTTP parser in the path (which is why
@@ -66,7 +66,7 @@ const redirectUpstreamTo = (port) => {
   const realConnect = tls.connect;
 
   dns.lookup = function (hostname, options, callback) {
-    if (hostname !== "api.7cav.us") return realLookup.apply(this, arguments);
+    if (hostname !== "api.15thmeu.org") return realLookup.apply(this, arguments);
     if (typeof options === "function") {
       callback = options;
       options = {};

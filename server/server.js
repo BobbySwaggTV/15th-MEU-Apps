@@ -17,12 +17,7 @@ const corsOptions = {
       "http://localhost",
       "http://localhost:3000",
       "http://localhost/",
-      "http://apps.7cav.us",
-      "https://apps.7cav.us",
-      "https://apps.7cav.us/",
-      "http://appsbeta.7cav.us",
-      "https://appsbeta.7cav.us",
-      "https://appsbeta.7cav.us/",
+      "https://apps.15thmeu.org",
     ];
     if (allowlist.indexOf(origin) !== -1 || !origin) {
       callback(null, true);
@@ -68,12 +63,11 @@ app.use(
 );
 // Public, unauthenticated endpoints. These must be registered before the
 // token gate below — the container healthcheck (curl http://localhost:4000)
-// and the client's readiness probe (wget --spider http://server:4000) both
-// hit GET / with no auth header, so it has to answer 200 without the token.
+// hits GET / with no auth header, so it has to answer 200 without the token.
 // /cache-timestamp is likewise public, as it was before the diff routes landed.
 app.get("/", (req, res) => {
   res.send(
-    "Server Test Page Loaded Successfully. Any issues? Submit a ticket to S6! Frontend is at https://apps.7cav.us/",
+    "Server Test Page Loaded Successfully. Any issues? Submit a ticket to S6! Frontend is at https://apps.15thmeu.org",
   );
 });
 

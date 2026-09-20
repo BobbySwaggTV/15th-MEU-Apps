@@ -10,7 +10,7 @@ WORKDIR /server
 
 COPY package*.json ./
 
-RUN npm install
+RUN npm ci --omit=dev
 
 # Copy server source code
 
@@ -18,6 +18,7 @@ COPY . .
 
 # Deploy
 
+ENV NODE_ENV=production
 EXPOSE 4000
 
-CMD ["node", "server.js"]
+CMD ["npm", "start"]

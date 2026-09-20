@@ -1,7 +1,7 @@
 const axios = require("axios");
 const axiosRetry = require("axios-retry").default || require("axios-retry");
 const API_TOKEN = process.env.API_TOKEN;
-const API_BASE_URL = process.env.API_BASE_URL || "https://api.7cav.us";
+const API_BASE_URL = process.env.API_BASE_URL || "https://api.15thmeu.org";
 
 let cacheStatus = {
   combat: false,

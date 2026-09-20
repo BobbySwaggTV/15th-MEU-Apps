@@ -4,6 +4,7 @@
   "description": "Javascript server for CavApps backend",
   "main": "index.js",
   "scripts": {
+    "start": "node server.js",
     "test": "node controllers/cacheManager.test.js",
     "migrate": "node-pg-migrate up",
     "migrate:create": "node-pg-migrate create",

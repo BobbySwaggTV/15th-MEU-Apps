@@ -4,6 +4,23 @@
 # Base compose expects an external `edge` network (created by the prod reverse
 # proxy). Locally that network doesn't exist, so this override redefines `edge`
 # as a compose-managed bridge — no `docker network create edge` needed.
+services:
+  server:
+    environment:
+      NODE_ENV: development
+  client:
+    environment:
+      NODE_ENV: development
+      WATCHPACK_POLLING: "true"
+      NEXT_PUBLIC_DIFF_API_URL: ${NEXT_PUBLIC_DIFF_API_URL:-http://localhost:4000}
+      NEXT_PUBLIC_USERCACHE_API_URL: ${NEXT_PUBLIC_USERCACHE_API_URL:-http://localhost:4000/userSearch}
+      NEXT_PUBLIC_INDIVIDUAL_API_URL: ${NEXT_PUBLIC_INDIVIDUAL_API_URL:-http://localhost:4000/roster/individual}
+    volumes:
+      - ./client:/client
+      - /client/node_modules
+      - /client/.next
+    command: ["/bin/sh", "-c", "npm install && exec npm run dev"]
+
 networks:
   edge:
     external: false

@@ -2,14 +2,17 @@
 
 ## Overview
 
-[![Production Deployment](https://github.com/7Cav/CavApps/actions/workflows/prod_deploy.yml/badge.svg)](https://apps.7cav.us/)
-[![Development Deployment](https://github.com/7Cav/CavApps/actions/workflows/dev_deploy.yml/badge.svg)](https://beta.apps.7cav.us/)
+15th MEU CavApps is a Next.js collection of tools for the 15th MEU, including the Active Duty Roster (ADR), Roster Statistics, and Uniform Builder. The project uses a frontend and backend (BFF) architecture with a client/server request gate.
 
-7th Cavalry Apps (CavApps) is a Nextjs based collection of tools and apps designed to aid the 7th Cavalry Gaming Regiment in its day to day functions. It currently includes the Active Duty Roster (ADR), a small collection of Roster Statistics, and the Uniform Builder. Future iterations could include a more advanced statistics tool, an AWOL tracker, and a migration of S1 Documents, among other possible tools. CavApps uses a Frontend-Backend architecture and includes basic authentication.
+Repository: [BobbySwaggTV/CavApps](https://github.com/BobbySwaggTV/CavApps).
+Originally developed as 7th Cavalry Apps; upstream attribution: [7Cav/CavApps](https://github.com/7Cav/CavApps).
 
-The live deployment can be found at https://apps.7cav.us/ and the backend at https://bff.apps.7cav.us/
+- Frontend: https://apps.15thmeu.org
+- Backend/BFF: https://bff.apps.15thmeu.org
+- API: https://api.15thmeu.org
+- Forum: https://15thmeu.org
 
-**NOTE:** This documentation is written so that an average member of the 7th Cavalry <em>should</em> be able to make basic edits to CavApps. If you need help with a particular matter or believe this documentation could be improved, please message S6 Development Staff on Discord or on the Forums.
+For project support, contact the 15th MEU staff through the forum.
 
 ## Table of Contents
 
@@ -23,7 +26,6 @@ The live deployment can be found at https://apps.7cav.us/ and the backend at htt
   - [Add New Category](#add-new-category)
   - [Files to Update](#files-to-update)
 - [Server Deployment](#server-deployment)
-  - [Requirements](#requirements-1)
 - [Roster Statistics](#roster-statistics)
   - [Add New Billet in Existing Category (Roster Statistics)](#add-new-billet-in-existing-category-roster-statistics)
   - [Add New Category (Roster Statistics)](#add-new-category-roster-statistics)
@@ -32,10 +34,10 @@ The live deployment can be found at https://apps.7cav.us/ and the backend at htt
 
 CavApps is a monorepo with two parts:
 
-- **`server/`**: an Express caching proxy ("BFF") that fetches roster data from the 7th Cavalry API and serves it from memory. It also keeps a Postgres database for roster-history diffs and the user-search cache.
-- **`client/`**: a Next.js 13 (App Router) app with three tools: the Active Duty Roster (ADR), Roster Statistics, and the Uniform Builder.
+- **`server/`**: an Express caching proxy ("BFF") that fetches roster data from the 15th MEU API and serves it from memory. It also keeps a Postgres database for roster-history diffs and the user-search cache.
+- **`client/`**: a Next.js (App Router) app with three tools: the Active Duty Roster (ADR), Roster Statistics, and the Uniform Builder.
 
-The client never talks to the 7th Cavalry API directly. It only talks to the server. The Docker setup below brings the Postgres database up for you, so there's nothing extra to install.
+The client never talks to the 15th MEU API directly. It only talks to the server. The Docker setup below brings the Postgres database up for you, so there's nothing extra to install.
 
 ### Authorization
 
@@ -43,14 +45,13 @@ You need two tokens:
 
 | Token          | Purpose                                                                                                             | Where it goes           |
 | -------------- | ------------------------------------------------------------------------------------------------------------------- | ----------------------- |
-| `API_TOKEN`    | Authenticates the **server** to `api.7cav.us`. A real 7th Cavalry API bearer.                                       | server env              |
-| `CLIENT_TOKEN` | Shared secret between the **client and server**. Can be any string you choose, as long as it matches on both sides. | server env + client env |
+| `API_TOKEN`    | Authenticates the **server** to `api.15thmeu.org`. A real 15th MEU API bearer.                                       | server env              |
+| `CLIENT_TOKEN` | Client/server request gate, visible in the browser; must match on both sides. | server env + client env |
 
-To get your `API_TOKEN`:
-
-1. Log into your [7th Cavalry Gaming](https://7cav.us/) account (member-level, not a public account).
-2. Open your [Connected Accounts](https://7cav.us/account/connected-accounts/) and click "view account" for `auth.7cav.us`.
-3. Log into Keycloak and copy the provided API token.
+Obtain a 15th MEU API bearer token from the API administrators. Keep `API_TOKEN`
+server-side. `CLIENT_TOKEN` is exposed as `NEXT_PUBLIC_CLIENT_TOKEN` and is only
+a client/server request gate, not a private credential. Never reuse `API_TOKEN`
+or another private credential for it.
 
 > **Heads up on `.env` formatting:** use `KEY=value` with **no spaces around the `=`** and no surrounding quotes. A line like `API_TOKEN ='abc'` (note the space) makes the variable name `API_TOKEN ` (with a trailing space), so Docker Compose treats `API_TOKEN` as unset and the server fails to load the roster on startup, then crash-loops instead of coming up.
 
@@ -65,7 +66,7 @@ This is the fastest way to get a working dev environment. It builds and runs bot
    cp .env.example .env
    ```
 
-   At a minimum set `API_TOKEN` and `CLIENT_TOKEN`. Everything else has a sensible local default: the Postgres database is created for you, and the XenForo settings can stay blank (see the notes in `.env.example`).
+   At a minimum set `API_TOKEN`, `CLIENT_TOKEN`, and `PG_PASSWORD`. Everything else has a sensible local default: the Postgres database is created for you, and the XenForo settings can stay blank (see the notes in `.env.example`).
 
 3. Bring the stack up:
 
@@ -90,12 +91,47 @@ docker compose -f docker-compose.yml -f docker-compose.dev.yml down
 
 > `docker-compose.yml` on its own is the **production** config and expects an externally managed `edge` network. For local dev always include the `-f docker-compose.dev.yml` override.
 
+### Production deployment
+
+Use `docker compose up -d --build` with the externally managed `edge` network
+already provisioned by the reverse proxy. Set `API_TOKEN`, `CLIENT_TOKEN`, and a
+strong `PG_PASSWORD` in the root `.env`; the database password has no Compose
+fallback. For the connection URL, use a URL-safe password. Changing this value
+does not rotate the password in an existing `pgdata` volume.
+
+Production runs source baked into the images, without client bind mounts. The
+server runs `npm start` (`node server.js`) after Postgres is healthy. Once the
+server is healthy, the client runs `npm run build` followed by `npm run start`.
+The build runs on every client container start so it receives the deployment's
+`NEXT_PUBLIC_*` values; allow time and memory for this build on restarts. Rebuild
+the images after source or dependency changes.
+
+Production Compose defaults to these endpoints (existing `.env` values override them):
+
+```dotenv
+API_BASE_URL=https://api.15thmeu.org
+FORUM_BASE_URL=https://15thmeu.org
+NEXT_PUBLIC_DIFF_API_URL=https://bff.apps.15thmeu.org
+NEXT_PUBLIC_USERCACHE_API_URL=https://bff.apps.15thmeu.org/userSearch
+NEXT_PUBLIC_INDIVIDUAL_API_URL=https://bff.apps.15thmeu.org/roster/individual
+```
+
+Configure the reverse proxy on `edge` to serve `https://apps.15thmeu.org` from
+client port 3000 and `https://bff.apps.15thmeu.org` from server port 4000, with
+DNS and TLS configured for both names. The dev overlay supplies localhost
+browser API defaults; explicitly configured `.env` values still take precedence.
+Public values,
+including the existing `NEXT_PUBLIC_CLIENT_TOKEN`, are embedded in the browser
+bundle and are visible to users. API and XenForo credentials remain server-side.
+The dev overlay restores client hot reload and dependency installation, and
+creates the local `edge` network. Server source changes still require a rebuild.
+
 ### Requirements
 
 If you'd rather run the apps directly on your machine instead of in Docker:
 
-- A valid [7th Cavalry Gaming](https://7cav.us/) account with member-level privileges.
-- [Node.js](https://nodejs.org/en) v18+.
+- A valid 15th MEU API bearer token (see [Authorization](#authorization)).
+- [Node.js](https://nodejs.org/en) v22.15+.
 - Your choice of IDE such as [VSCode](https://code.visualstudio.com/) or [neoVim](https://neovim.io/).
 
 ### Manual Setup (without Docker)
@@ -113,8 +149,8 @@ That gives you a database reachable at `postgres://cavapps:cavapps@localhost:543
 ```bash
 cd server
 npm install
-API_TOKEN=your-7cav-api-token \
-CLIENT_TOKEN=any-shared-secret \
+API_TOKEN=your-15thmeu-api-token \
+CLIENT_TOKEN=your-client-request-gate-value \
 DATABASE_URL=postgres://cavapps:cavapps@localhost:5432/cavapps?sslmode=disable \
 node server.js
 ```
@@ -126,7 +162,7 @@ The server listens on `http://localhost:4000`. Visiting it in a browser confirms
 Create `client/.env.local` with:
 
 ```dotenv
-NEXT_PUBLIC_CLIENT_TOKEN=any-shared-secret-you-choose
+NEXT_PUBLIC_CLIENT_TOKEN=your-client-request-gate-value-you-choose
 COMBAT_API_URL=http://localhost:4000/roster/combat
 RESERVE_API_URL=http://localhost:4000/roster/reserves
 GROUP_API_URL=http://localhost:4000/roster/groups
@@ -152,7 +188,7 @@ For further documentation on Next.js, visit https://nextjs.org/docs
 
 > **Before starting:** The ADR and the [Roster Statistics](#roster-statistics) page are driven by different files. The ADR reads billet groups by index from `client/app/adr/page.jsx`; Roster Statistics reads billet IDs from `BilletBank.jsx`. A new billet inside a group the ADR already selects needs no ADR change, because the ADR picks it up live from the API. You only need to update `page.jsx` when a new billet group appears or a group moves between categories. Roster Statistics always needs its `BilletBank.jsx` list updated (and, for the regiment chart, a matching color). See [Files to Update](#files-to-update) for the full list.
 
-Since the ADR sources its data from the 7th Cavalry API but selects which billet groups to show from a predefined list, the ADR is not aware when new billet groups are created or when older groups are moved between categories.
+Since the ADR sources its data from the 15th MEU API but selects which billet groups to show from a predefined list, the ADR is not aware when new billet groups are created or when older groups are moved between categories.
 
 For example, if a new company in 2-7 is created, the list the ADR selects from needs to be updated before the new company's membership will display.
 
@@ -229,71 +265,24 @@ Because the ADR and Roster Statistics are driven separately, adding a billet or 
 
 ## Server Deployment
 
-**NOTE:** If you are making changes to CavApps and want said changes put on the live version, submit a pull request. This section is intended for S6 Staff for deployment testing purposes.
-
-### Requirements
-
-To deploy CavApps on a server, you need the following:
-
-- A linux (preferably ubuntu) based server with the following:
-  - Access via SSH
-  - Sudo level permissions
-  - Minimum 2GB RAM
-- Alongside the following packages:
-  - [Docker Engine](https://docs.docker.com/engine/install/ubuntu/)
-  - nodejs
-  - npm
-  - git
-
-  ```
-  sudo apt install git npm nodejs
-  ```
-
-- A 7th Cavalry API token (see [Authorization](#authorization))
-
----
-
-### Deployment
-
-Once the required packages are installed, clone the repo
-
-```
-git clone https://github.com/Vercin-G/CavApps-Test
-```
-
-First, install prerequisites:
-
-In `CavApps-Test/server/`:
-
-```
-npm install
-```
-
-In `CavApps-Test/client/`:
-
-```
-npm install
-```
-
-Next, create a `.env` file in the project root from the template and fill in your tokens (see [Authorization](#authorization)):
+Use a Linux host with Docker Engine, the Docker Compose plugin, and Git.
+Clone the maintained repository:
 
 ```bash
+git clone https://github.com/BobbySwaggTV/CavApps.git
+cd CavApps
 cp .env.example .env
 ```
 
-The `docker-compose.yml` wires the client to reach the server over the internal Docker network (`http://server:4000/...`), so you do not need to set the per-URL client variables by hand for a Docker deployment. They're defined in the compose file. It also brings up the Postgres database the server depends on.
-
-Then, from the project root:
+Fill in the environment values and follow [Production deployment](#production-deployment)
+above. Docker installs dependencies; host-side npm installation is not required.
+Deployment uses Compose directly; the obsolete upstream image-publishing and
+Watchtower workflows have been removed. Provision the external `edge` network
+through the reverse proxy before starting:
 
 ```bash
-docker compose up
+docker compose up -d --build
 ```
-
-> Production `docker compose up` (without the dev override) expects an externally managed `edge` network. Create it once with `docker network create edge` if it doesn't already exist on the host.
-
-And you should be good! Simply navigate to your server in your browser and the index page should show. The server side should be accessable via port 4000.
-
-**NOTE:** On slower servers, the generation of nextjs static pages may cause a hang. This is normal. Give it a few seconds.
 
 ## Roster Statistics
 

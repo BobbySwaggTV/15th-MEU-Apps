@@ -40,7 +40,7 @@ export default async function RosterStatistics() {
       <div className="DepartmentContainer">
         <div className="RegimentBreakdown">
           <div className="Subtitle">
-            7th Cavalry Regiment (Active Duty and Line Billets only)
+            15th Marine Expeditionary Unit (Active Duty and Line Billets only)
           </div>
           <Statistics
             billetIDs={[
