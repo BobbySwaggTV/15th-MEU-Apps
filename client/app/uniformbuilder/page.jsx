@@ -7,7 +7,7 @@ import "./page.css";
 import Loading from "../adr/loading";
 import searchForUser from "../reusableModules/searchForUser";
 
-export default function Skunkworks() {
+export default function UniformBuilder() {
   const [userName, setUserName] = useState("");
   const [canvasData, setCanvasData] = useState(null);
   const [suggestions, setSuggestions] = useState([]);

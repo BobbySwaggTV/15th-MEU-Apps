@@ -2,7 +2,7 @@ import "./globals.css";
 
 export const metadata = {
   title: "15th MEU Apps",
-  description: "NextJS based apps for 15th MEU Gaming",
+  description: "Next.js applications for the 15th Marine Expeditionary Unit",
   robots: {
     index: false,
   },
