@@ -174,8 +174,9 @@ export default function UniformBuilder() {
               {suggestions.map((name, index) => (
                 <div
                   key={index}
-                  className={`${name === "..." ? "suggestion-more" : "suggestion-item"
-                    } ${index === activeIndex ? "active" : ""}`}
+                  className={`${
+                    name === "..." ? "suggestion-more" : "suggestion-item"
+                  } ${index === activeIndex ? "active" : ""}`}
                   style={{ animationDelay: `${index * 0.03}s` }}
                   onClick={() => name !== "..." && suggestionClicked(name)}
                 >

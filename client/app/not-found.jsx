@@ -9,8 +9,8 @@ export default function Error404() {
       <h2>Oh no! you have encountered a page that does not exist!</h2>
       <h3>
         If you believe this is in error, please contact staff on the{" "}
-        <a href="https://15thmeu.org">15th MEU forum</a>.
-        Otherwise, please enjoy this sick music!
+        <a href="https://15thmeu.org">15th MEU forum</a>. Otherwise, please
+        enjoy this sick music!
       </h3>
       <iframe
         title="Vampires"

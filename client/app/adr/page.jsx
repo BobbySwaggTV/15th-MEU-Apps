@@ -39,16 +39,16 @@ export default async function ActiveDutyRoster() {
     {
       title: "15th MEU",
       selectors: [
-        0,  // Regimental Headquarters
-        1,  // Support Attachment
-        2,  // 1-7 Command
-        3,  // Alpha Company 1-7
-        4,  // Bravo Company 1-7
-        5,  // Charlie Company 1-7
-        6,  // Delta Company 1-7
-        7,  // 2-7 Command
-        8,  // Alpha Company 2-7
-        9,  // Bravo Company 2-7
+        0, // Regimental Headquarters
+        1, // Support Attachment
+        2, // 1-7 Command
+        3, // Alpha Company 1-7
+        4, // Bravo Company 1-7
+        5, // Charlie Company 1-7
+        6, // Delta Company 1-7
+        7, // 2-7 Command
+        8, // Alpha Company 2-7
+        9, // Bravo Company 2-7
         10, // Charlie Company 2-7
         11, // Echo Company 2-7
         12, // 3-7 Command
