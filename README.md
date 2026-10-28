@@ -1,11 +1,11 @@
-<p align="center"><img src="./client/public/CavAppsLogo.svg" width = 400em></p>
+<p align="center"><img src="./client/public/15thmeu-Logo.png" width = 400em></p>
 
 ## Overview
 
-15th MEU CavApps is a Next.js collection of tools for the 15th MEU, including the Active Duty Roster (ADR), Roster Statistics, and Uniform Builder. The project uses a frontend and backend (BFF) architecture with a client/server request gate.
+15th MEU Apps is a Next.js collection of tools for the 15th Marine Expeditionary Unit (15th MEU), including the Active Duty Roster (ADR), Roster Statistics, Roster History, and Uniform Builder. The project uses a frontend and backend (BFF) architecture with a client/server request gate.
 
-Repository: [BobbySwaggTV/CavApps](https://github.com/BobbySwaggTV/CavApps).
-Originally developed as 7th Cavalry Apps; upstream attribution: [7Cav/CavApps](https://github.com/7Cav/CavApps).
+Repository: [BobbySwaggTV/15th-MEU-Apps](https://github.com/BobbySwaggTV/15th-MEU-Apps).
+Originally developed as 7th Cavalry CavApps; upstream attribution: [7Cav/CavApps](https://github.com/7Cav/CavApps).
 
 - Frontend: https://apps.15thmeu.org
 - Backend/BFF: https://bff.apps.15thmeu.org
@@ -32,10 +32,10 @@ For project support, contact the 15th MEU staff through the forum.
 
 ## Running Locally
 
-CavApps is a monorepo with two parts:
+15th MEU Apps is a monorepo with two parts:
 
 - **`server/`**: an Express caching proxy ("BFF") that fetches roster data from the 15th MEU API and serves it from memory. It also keeps a Postgres database for roster-history diffs and the user-search cache.
-- **`client/`**: a Next.js (App Router) app with three tools: the Active Duty Roster (ADR), Roster Statistics, and the Uniform Builder.
+- **`client/`**: a Next.js (App Router) app with four tools: the Active Duty Roster (ADR), Roster Statistics, Roster History, and the Uniform Builder.
 
 The client never talks to the 15th MEU API directly. It only talks to the server. The Docker setup below brings the Postgres database up for you, so there's nothing extra to install.
 
@@ -76,7 +76,7 @@ This is the fastest way to get a working dev environment. It builds and runs bot
 
 That's it. The override file (`docker-compose.dev.yml`) provisions the `edge` network locally, so you don't need to run `docker network create` yourself. When it finishes:
 
-- Client (CavApps index): http://localhost:3000
+- Client (15th MEU Apps index): http://localhost:3000
 - Server (BFF): http://localhost:4000
 
 The server must successfully load roster data on startup or it will exit and restart. If it keeps restarting, double-check your `API_TOKEN` (see the formatting note above).
@@ -180,7 +180,7 @@ npm install
 npm run dev
 ```
 
-Open http://localhost:3000 and you should see the CavApps index page. Happy coding!
+Open http://localhost:3000 and you should see the 15th MEU Apps index page. Happy coding!
 
 For further documentation on Next.js, visit https://nextjs.org/docs
 
@@ -269,8 +269,8 @@ Use a Linux host with Docker Engine, the Docker Compose plugin, and Git.
 Clone the maintained repository:
 
 ```bash
-git clone https://github.com/BobbySwaggTV/CavApps.git
-cd CavApps
+git clone https://github.com/BobbySwaggTV/15th-MEU-Apps.git
+cd 15th-MEU-Apps
 cp .env.example .env
 ```
 

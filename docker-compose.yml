@@ -8,7 +8,7 @@ services:
   # reachable, so it comes up first as part of the stack — no setup required.
   postgres:
     image: postgres:16-alpine
-    container_name: cavapps-postgres
+    container_name: meuapps-postgres
     restart: always
     environment:
       POSTGRES_DB: cavapps
@@ -22,14 +22,14 @@ services:
       timeout: 5s
       retries: 10
     networks:
-      - cavapps-network
+      - meuapps-network
 
   server:
     restart: always
     build:
       dockerfile: "./server.Dockerfile"
       context: "./server"
-    container_name: cavapps-server
+    container_name: meuapps-server
     #labels:
     #- com.centurylinklabs.watchtower.enable=true
     ports:
@@ -68,14 +68,14 @@ services:
       start_period: 30s
     networks:
       - edge
-      - cavapps-network
+      - meuapps-network
 
   client:
     restart: always
     build:
       context: ./client
       dockerfile: ./client.Dockerfile
-    container_name: cavapps-client
+    container_name: meuapps-client
     #labels:
     #- com.centurylinklabs.watchtower.enable=true
     environment:
@@ -101,13 +101,13 @@ services:
         condition: service_healthy
     networks:
       - edge
-      - cavapps-network
+      - meuapps-network
 
 networks:
   edge:
     external: true
     name: edge
-  cavapps-network:
+  meuapps-network:
     driver: bridge
 
 volumes:

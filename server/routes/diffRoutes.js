@@ -5,7 +5,7 @@ const { runSnapshot } = require("../controllers/diffPoller");
 const { RANK_SHORT } = require("../db/milpacDb");
 
 // Build the rank-ordering payload the frontend's groupEvents.js consumes
-// (Map<rankShort, rankDisplayOrder>, lower = more senior). The 7Cav rank_id
+// (Map<rankShort, rankDisplayOrder>, lower = more senior). The 15th MEU rank_id
 // already encodes seniority order, so we reuse it directly as the display
 // order. Computed once at module load — RANK_SHORT is a static table.
 const RANKS_PAYLOAD = Object.entries(RANK_SHORT).map(([rankId, rankShort]) => ({
@@ -77,7 +77,7 @@ router.get("/diffs/:date", async (req, res) => {
 });
 
 // GET /ranks — rank-ordering table (rankShort + rankDisplayOrder) the frontend
-// uses to sort events by seniority. Derived from the static 7Cav rank table.
+// uses to sort events by seniority. Derived from the static 15th MEU rank table.
 router.get("/ranks", (req, res) => {
   res
     .set("Cache-Control", "public, max-age=3600")
