@@ -66,7 +66,8 @@ const redirectUpstreamTo = (port) => {
   const realConnect = tls.connect;
 
   dns.lookup = function (hostname, options, callback) {
-    if (hostname !== "api.15thmeu.org") return realLookup.apply(this, arguments);
+    if (hostname !== "api.15thmeu.org")
+      return realLookup.apply(this, arguments);
     if (typeof options === "function") {
       callback = options;
       options = {};
